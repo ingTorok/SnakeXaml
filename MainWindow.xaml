@@ -4,9 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SnakeXaml"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" KeyDown="Window_KeyDown">
-    <Grid>
+        Title="MainWindow" Height="500" Width="500" KeyDown="Window_KeyDown">
+    <Grid x:Name="MainGrid">
         <TextBlock x:Name="NumberOfMealsTextBlock" 
                    HorizontalAlignment="Center" 
                    VerticalAlignment="Center"
@@ -15,10 +16,8 @@
                    Foreground="Gray"
                    Text="0"
                    Visibility="Visible"/>
-        
-        <Grid x:Name="ArenaGrid">
 
-        </Grid>
+        <Grid x:Name="ArenaGrid"/>
 
     </Grid>
 </Window>
