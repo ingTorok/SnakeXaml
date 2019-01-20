@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace SnakeXaml.Model
 {
@@ -16,6 +17,9 @@ namespace SnakeXaml.Model
     class Arena
     {
         private MainWindow View;
+        private Snake snake;
+        private DispatcherTimer pendulum;
+        private bool isStarted;
 
         /// <summary>
         /// Contructor for Arena Class
@@ -24,25 +28,83 @@ namespace SnakeXaml.Model
         public Arena(MainWindow view)
         {
             View = view;
+            CreateGrid();
+
+            snake = new Snake(10,10);
+
+            pendulum = new DispatcherTimer(TimeSpan.FromMilliseconds(100),DispatcherPriority.Normal, ItsTimeForDisplay, Application.Current.Dispatcher);
+
+            isStarted = false;
+        }
+
+        private void ItsTimeForDisplay(object sender, EventArgs e)
+        {
+            var currentPosition = new ArenaPosition(snake.HeadPosition.RowPosition, snake.HeadPosition.ColumnPosition);
+
+            switch (snake.HeadDirection)
+            {
+                case SnakeHeadDirectionEnum.Up:
+                    snake.HeadPosition.RowPosition = snake.HeadPosition.RowPosition - 1;
+                    break;
+                case SnakeHeadDirectionEnum.Down:
+                    snake.HeadPosition.RowPosition = snake.HeadPosition.RowPosition + 1;
+                    break;
+                case SnakeHeadDirectionEnum.Left:
+                    snake.HeadPosition.ColumnPosition = snake.HeadPosition.ColumnPosition - 1;
+                    break;
+                case SnakeHeadDirectionEnum.Right:
+                    snake.HeadPosition.ColumnPosition = snake.HeadPosition.ColumnPosition + 1;
+                    break;
+                case SnakeHeadDirectionEnum.StartingPosition:
+                    break;
+                default:
+                    break;
+            }
+
+            var cell = View.ArenaGrid.Children[snake.HeadPosition.RowPosition * 20 + snake.HeadPosition.ColumnPosition];
+
+            var image = (ImageAwesome)cell;
+            Console.WriteLine(image.Name);
+
+            image.Icon = FontAwesomeIcon.Circle;
+
+            cell = View.ArenaGrid.Children[currentPosition.RowPosition * 20 + currentPosition.ColumnPosition];
+            image = (ImageAwesome)cell;
+            image.Icon = FontAwesomeIcon.SquareOutline;
         }
 
         internal void KeyDown(KeyEventArgs e)
         {
-            switch (e.Key)
+            if (!isStarted)
             {
-                case Key.Left:
-                case Key.Up:
-                case Key.Right:
-                case Key.Down:
-                    View.NumberOfMealsTextBlock.Visibility = System.Windows.Visibility.Visible;
-                    CreateGrid();
-                    var cell = View.ArenaGrid.Children[10 * 20 + 10];
-                    var image = (ImageAwesome)cell;
-
-                    image.Icon = FontAwesomeIcon.Circle;
-
-                    break;
+                StartNewGame();
+                isStarted = true;
             }
+            else
+            {
+                switch (e.Key)
+                {
+                    case Key.Left:
+                        snake.HeadDirection = SnakeHeadDirectionEnum.Left;
+                        break;
+                    case Key.Up:
+                        snake.HeadDirection = SnakeHeadDirectionEnum.Up;
+                        break;
+                    case Key.Right:
+                        snake.HeadDirection = SnakeHeadDirectionEnum.Right;
+                        break;
+                    case Key.Down:
+                        snake.HeadDirection = SnakeHeadDirectionEnum.Down;
+                        break;
+                }
+            }
+            
+        }
+
+        private void StartNewGame()
+        {
+            View.NumberOfMealsTextBlock.Visibility = Visibility.Visible;
+            isStarted = true;
         }
 
         /// <summary>
@@ -51,22 +113,22 @@ namespace SnakeXaml.Model
         private void CreateGrid()
         {
             //variables to add colums and rows
-            ColumnDefinition column;
             RowDefinition row;
+            ColumnDefinition column;
 
             //variable to add fontawesome image to grid
             ImageAwesome image;
         
             for (int i = 0; i < 20; i++)
             {//we will add 20 columns and 20 rows
-                //Define colums and rows
-                //the Width and Height are automatically set to "*"
-                column = new ColumnDefinition();
+             //Define colums and rows
+             //the Width and Height are automatically set to "*"
                 row = new RowDefinition();
+                column = new ColumnDefinition();
 
                 //add columns add rows to ArenaGrid
-                View.ArenaGrid.ColumnDefinitions.Add(column);
                 View.ArenaGrid.RowDefinitions.Add(row);
+                View.ArenaGrid.ColumnDefinitions.Add(column);
 
             }
 
@@ -79,8 +141,8 @@ namespace SnakeXaml.Model
                     image.Icon = FontAwesomeIcon.SquareOutline;
 
                     //set the grid colums and rows for the image object
-                    Grid.SetColumn(image, i);
-                    Grid.SetRow(image, j);
+                    Grid.SetRow(image, i);
+                    Grid.SetColumn(image, j);
 
                     //add the image object to ArenaGrid
                     View.ArenaGrid.Children.Add(image);

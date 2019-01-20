@@ -32,7 +32,17 @@ namespace SnakeXaml
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            arena.KeyDown(e);
+            switch (e.Key)
+            {
+                case Key.Left:
+                case Key.Up:
+                case Key.Right:
+                case Key.Down:
+                    arena.KeyDown(e);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

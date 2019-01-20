@@ -16,8 +16,8 @@
                    Foreground="Gray"
                    Text="0"
                    Visibility="Visible"/>
-
+        
         <Grid x:Name="ArenaGrid"/>
 
-    </Grid>
+        </Grid>
 </Window>
