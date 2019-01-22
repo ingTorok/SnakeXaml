@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace SnakeXaml.Model
@@ -39,7 +40,12 @@ namespace SnakeXaml.Model
 
         private void ItsTimeForDisplay(object sender, EventArgs e)
         {
-            var currentPosition = new ArenaPosition(snake.HeadPosition.RowPosition, snake.HeadPosition.ColumnPosition);
+            if (!isStarted)
+            {
+                return;
+            }
+
+            var neck = new ArenaPosition(snake.HeadPosition.RowPosition, snake.HeadPosition.ColumnPosition);
 
             switch (snake.HeadDirection)
             {
@@ -61,16 +67,60 @@ namespace SnakeXaml.Model
                     break;
             }
 
-            var cell = View.ArenaGrid.Children[snake.HeadPosition.RowPosition * 20 + snake.HeadPosition.ColumnPosition];
+            ShowSnakeHead(snake.HeadPosition.RowPosition, snake.HeadPosition.ColumnPosition);
+
+            ShowSnakeNeck(neck.RowPosition, neck.ColumnPosition);
+
+            snake.Tail.Add(new ArenaPosition(neck.RowPosition, neck.ColumnPosition));
+
+
+            if (snake.Tail.Count < snake.Length)
+            {
+
+            }
+            else
+            {
+                var end = snake.Tail[0];
+
+                ShowEmptyArenaPosition(end.RowPosition, end.ColumnPosition);
+
+                snake.Tail.RemoveAt(0);
+            }
+
+            //cell = View.ArenaGrid.Children[neck.RowPosition * 20 + neck.ColumnPosition];
+            //image = (ImageAwesome)cell;
+            //image.Icon = FontAwesomeIcon.SquareOutline;
+        }
+
+        private void ShowEmptyArenaPosition(int rowPosition, int columnPosition)
+        {
+            var image = GetImage(rowPosition, columnPosition);
+
+            image.Icon = FontAwesomeIcon.SquareOutline;
+            image.Foreground = Brushes.Black;
+        }
+
+        private void ShowSnakeNeck(int rowPosition, int columnPosition)
+        {
+            var image = GetImage(rowPosition, columnPosition);
+
+            image.Icon = FontAwesomeIcon.Square;
+            image.Foreground = Brushes.Gray;
+        }
+
+        private void ShowSnakeHead(int RowPosition, int ColumnPosition)
+        {
+            var image = GetImage(RowPosition, ColumnPosition);
+
+            image.Icon = FontAwesomeIcon.Square;
+        }
+
+        private ImageAwesome GetImage(int RowPosition, int ColumnPosition)
+        {
+            var cell = View.ArenaGrid.Children[RowPosition * 20 + ColumnPosition];
 
             var image = (ImageAwesome)cell;
-            Console.WriteLine(image.Name);
-
-            image.Icon = FontAwesomeIcon.Circle;
-
-            cell = View.ArenaGrid.Children[currentPosition.RowPosition * 20 + currentPosition.ColumnPosition];
-            image = (ImageAwesome)cell;
-            image.Icon = FontAwesomeIcon.SquareOutline;
+            return image;
         }
 
         internal void KeyDown(KeyEventArgs e)
