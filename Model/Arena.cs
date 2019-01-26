@@ -21,6 +21,11 @@ namespace SnakeXaml.Model
         private Snake snake;
         private DispatcherTimer pendulum;
         private bool isStarted;
+        private int RowCounnt;
+        private int ColumnCount;
+        private Random Random;
+        private Foods foods;
+        private int foodsHaveEatenCount;
 
         /// <summary>
         /// Contructor for Arena Class
@@ -28,6 +33,9 @@ namespace SnakeXaml.Model
         /// <param name="view">The window where we will play the game</param>
         public Arena(MainWindow view)
         {
+            RowCounnt = 20;
+            ColumnCount = 20;
+
             View = view;
             CreateGrid();
 
@@ -36,6 +44,13 @@ namespace SnakeXaml.Model
             pendulum = new DispatcherTimer(TimeSpan.FromMilliseconds(100),DispatcherPriority.Normal, ItsTimeForDisplay, Application.Current.Dispatcher);
 
             isStarted = false;
+
+            Random = new Random();
+
+            foods = new Foods();
+
+            foodsHaveEatenCount = 0;
+
         }
 
         private void ItsTimeForDisplay(object sender, EventArgs e)
@@ -62,9 +77,37 @@ namespace SnakeXaml.Model
                     snake.HeadPosition.ColumnPosition = snake.HeadPosition.ColumnPosition + 1;
                     break;
                 case SnakeHeadDirectionEnum.StartingPosition:
-                    break;
+                    return;
                 default:
                     break;
+            }
+
+            if (snake.HeadPosition.RowPosition<0 || snake.HeadPosition.RowPosition>RowCounnt-1 ||
+                snake.HeadPosition.ColumnPosition<0 || snake.HeadPosition.ColumnPosition> ColumnCount-1)
+            {//Collosion with border
+                EndOfGame();
+                return;
+            }
+
+            if (snake.Tail.Any(x=>x.RowPosition == snake.HeadPosition.RowPosition 
+                                && x.ColumnPosition == snake.HeadPosition.ColumnPosition))
+            {//Collosion with snake
+                EndOfGame();
+                return;
+            }
+
+
+            //todo bescomagolni a Foods classbe es ott vizsgalni meg hogy etelt ettunke ha igen trueval jon vissza ha nem akkor falseal
+            if (foods.FoodPositions.Any(x=>x.RowPosition==snake.HeadPosition.RowPosition 
+                                        && x.ColumnPosition==snake.HeadPosition.ColumnPosition))
+            {
+                foods.Remove(snake.HeadPosition.RowPosition, snake.HeadPosition.ColumnPosition);
+
+                foodsHaveEatenCount = foodsHaveEatenCount + 1;
+
+                View.NumberOfMealsTextBlock.Text = foodsHaveEatenCount.ToString();
+
+                GetNewFood();
             }
 
             ShowSnakeHead(snake.HeadPosition.RowPosition, snake.HeadPosition.ColumnPosition);
@@ -90,6 +133,21 @@ namespace SnakeXaml.Model
             //cell = View.ArenaGrid.Children[neck.RowPosition * 20 + neck.ColumnPosition];
             //image = (ImageAwesome)cell;
             //image.Icon = FontAwesomeIcon.SquareOutline;
+        }
+
+        private void EndOfGame()
+        {
+            pendulum.Stop();
+        }
+
+        //todo vondd össze a négy függvényt!
+
+        private void ShowNewFood(int rowPosition, int columnPosition)
+        {
+            var image = GetImage(rowPosition, columnPosition);
+
+            image.Icon = FontAwesomeIcon.Apple;
+            image.Foreground = Brushes.Red;
         }
 
         private void ShowEmptyArenaPosition(int rowPosition, int columnPosition)
@@ -155,6 +213,27 @@ namespace SnakeXaml.Model
         {
             View.NumberOfMealsTextBlock.Visibility = Visibility.Visible;
             isStarted = true;
+            GetNewFood();
+        }
+
+        private void GetNewFood()
+        {
+            var row = Random.Next(0, RowCounnt - 1);
+            var column = Random.Next(0, ColumnCount - 1);
+
+            //todo szebben megoldani
+
+
+            while (snake.HeadPosition.RowPosition == row && snake.HeadPosition.ColumnPosition == column
+                || snake.Tail.Any(x => x.RowPosition == row && x.ColumnPosition == column))
+            {
+                row = Random.Next(0, RowCounnt - 1);
+                column = Random.Next(0, ColumnCount - 1);
+            }
+
+            foods.Add(row, column);
+
+            ShowNewFood(row, column);
         }
 
         /// <summary>
@@ -182,9 +261,9 @@ namespace SnakeXaml.Model
 
             }
 
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < RowCounnt; i++)
             {//here we will fill the grid with image, so the gamearen will be visible
-                for (int j = 0; j < 20; j++)
+                for (int j = 0; j < ColumnCount; j++)
                 {
                     //create new image
                     image = new ImageAwesome();
@@ -200,6 +279,7 @@ namespace SnakeXaml.Model
                 }
             }
 
+            
             
         }
     }
