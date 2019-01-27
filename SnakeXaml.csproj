@@ -73,10 +73,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Arena.cs" />
+    <Compile Include="Model\ArenaGrid.cs" />
+    <Compile Include="Model\ArenaOld.cs" />
     <Compile Include="Model\ArenaPosition.cs" />
     <Compile Include="Model\Foods.cs" />
     <Compile Include="Model\Snake.cs" />
     <Compile Include="Model\SnakeHeadDirectionEnum.cs" />
+    <Compile Include="Model\SnakePart.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

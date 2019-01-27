@@ -21,13 +21,17 @@ namespace SnakeXaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private Arena arena;
+        private ArenaGrid arena;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            arena = new Arena(this);
+            //arena = new ArenaOld(this);
+
+            arena = new ArenaGrid(this, 5);
+
+                          
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -39,6 +43,7 @@ namespace SnakeXaml
                 case Key.Right:
                 case Key.Down:
                     arena.KeyDown(e);
+                    e.Handled = true;
                     break;
                 default:
                     break;
