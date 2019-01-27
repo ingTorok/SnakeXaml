@@ -41,7 +41,7 @@ namespace SnakeXaml.Model
         {
             HeadPosition = new ArenaPosition(rowPosition, columnPosition);
             HeadDirection = SnakeHeadDirectionEnum.StartingPosition;
-            Length = 100;
+            Length = 6;
             Tail = new List<ArenaPosition>();
         }
     }

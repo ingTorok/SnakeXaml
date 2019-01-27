@@ -81,7 +81,7 @@ namespace SnakeXaml.Model
                 Pendulum.Stop();
             }
 
-            var interval = 100000 / Snake.Length / 2;
+            var interval = 1500 / Snake.Length / 2;
 
             Pendulum = new DispatcherTimer(TimeSpan.FromMilliseconds(interval), DispatcherPriority.Normal, ItsTimeForDisplay, Application.Current.Dispatcher);
         }
@@ -149,7 +149,13 @@ namespace SnakeXaml.Model
             
         }
 
-        protected virtual void ShowPoint(ArenaPoints head, int rowPosition, int columnPosition)
+        /// <summary>
+        /// The method to show a point on Arena
+        /// </summary>
+        /// <param name="point"></param>
+        /// <param name="rowPosition"></param>
+        /// <param name="columnPosition"></param>
+        protected virtual void ShowPoint(ArenaPoints point, int rowPosition, int columnPosition)
         {
            
         }
@@ -246,8 +252,8 @@ namespace SnakeXaml.Model
         /// </summary>
         private void StartNewGame()
         {
-            StartPendulum();
             GetNewFood();
+            StartPendulum();
             IsStarted = true;          
         }
 

@@ -22,6 +22,6 @@
 
             <Grid x:Name="ArenaGrid"/>
 
-        </Grid>
+     </Grid>
    
 </Window>

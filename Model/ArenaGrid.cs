@@ -100,6 +100,12 @@ namespace SnakeXaml.Model
             }
         }
 
+        /// <summary>
+        /// Get the ImageAwseome object corresponding Row and Column
+        /// </summary>
+        /// <param name="RowPosition"></param>
+        /// <param name="ColumnPosition"></param>
+        /// <returns></returns>
         private ImageAwesome GetImage(int RowPosition, int ColumnPosition)
         {
             var cell = View.ArenaGrid.Children[RowPosition * ArenaSize + ColumnPosition];

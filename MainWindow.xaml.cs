@@ -21,7 +21,7 @@ namespace SnakeXaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ArenaGrid arena;
+        private ArenaCanvas arena;
 
         public MainWindow()
         {
@@ -29,7 +29,7 @@ namespace SnakeXaml
 
             //arena = new ArenaOld(this);
 
-            arena = new ArenaGrid(this, 5);
+            arena = new ArenaCanvas(this, 20);
 
                           
         }
